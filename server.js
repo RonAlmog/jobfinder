@@ -1,6 +1,7 @@
 var express = require('express');
 var mongoose = require('mongoose');
 var jobModel = require('./models/Job');
+var jobsData = require("./jobs-data.js");
 
 
 var app = express();
@@ -14,7 +15,8 @@ app.set('view engine', 'jade');
 app.use(express.static(__dirname + '/public')); // bower_components'));
 
 app.get('/api/jobs', function(req, res){
-   mongoose.model('Job').find({}).exec(function(error, collection){
+   //mongoose.model('Job').find({}).exec(function(error, collection){
+    jobsData.findJobs().then(function(collection){
        res.send(collection);
    });
 });
@@ -25,15 +27,15 @@ app.get('*', function(req, res){
 
 // connect to mongodb.  mongodb://localhost is the default constring.
 // jobfinder is the db. if it can't be found, it will be created.
-//mongoose.connect('mongodb://localhost/jobfinder');
-mongoose.connect('mongodb://jobfinder99user:goodforme@ds029051.mongolab.com:29051/jobfinder99');
+//var constring = 'mongodb://localhost/jobfinder';
+var constring = 'mongodb://jobfinder99user:goodforme@ds029051.mongolab.com:29051/jobfinder99';
 
-// make sure we are connected.
-var con = mongoose.connection;
-con.once('open', function(){
-   console.log('connected to mongodb successfully!');
-   jobModel.seedJobs();
-});
+jobsData.connectDB(constring)
+    .then(function(){
+            console.log('connected to mongodb successfully!');
+            jobsData.seedJobs();
+        });
+
 
 // listen on ports provided by c9
 app.listen(process.env.PORT, process.env.IP);
