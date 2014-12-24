@@ -6,6 +6,8 @@ var jobsData = require("./jobs-data.js");
 
 var app = express();
 
+require("./jobs-service.js")(jobsData, app);
+
 // head of all views
 app.set('views', __dirname);
 // use jade as view engine
@@ -14,12 +16,12 @@ app.set('view engine', 'jade');
 // declare whre static content will be taken from 
 app.use(express.static(__dirname + '/public')); // bower_components'));
 
-app.get('/api/jobs', function(req, res){
-   //mongoose.model('Job').find({}).exec(function(error, collection){
-    jobsData.findJobs().then(function(collection){
-       res.send(collection);
-   });
-});
+// app.get('/api/jobs', function(req, res){
+//   //mongoose.model('Job').find({}).exec(function(error, collection){
+//     jobsData.findJobs().then(function(collection){
+//       res.send(collection);
+//   });
+// });
 
 app.get('*', function(req, res){
     res.render('index');
